@@ -20,14 +20,16 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
-    RequestQueue mRequestQueue; // create a request queue for the json requests
+//    RequestQueue mRequestQueue; // create a request queue for the json requests
+    RequestQueue mSingleRequestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRequestQueue = Volley.newRequestQueue(this); // This will initialize the queue
+//        mRequestQueue = Volley.newRequestQueue(this); // This will initialize the queue
+        mSingleRequestQueue = VolleySingleton.getInstance().getRequestQueue(); // This is the singleton's way of getting the request queue
 
         // This will work for an actual json object, but NOT an array
         JsonObjectRequest myRequest = new JsonObjectRequest(Request.Method.GET, "https://jsonplaceholder.typicode.com/users/1", null, new Response.Listener<JSONObject>() {
@@ -37,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("RESPONSE VALID DATA", "We did it!" + response);
                 System.out.println("My response is: " + response);
                 try {
-                    Log.i("JSONINFO", "Id is: " + response.getInt("id"));
-                    Log.i("JSONINFO", "Name is: " + response.getString("name"));
+                    Log.i("OBJINFO", "Id is: " + response.getInt("id"));
+                    Log.i("OBJINFO", "Name is: " + response.getString("name"));
                     int userId = response.getInt("id");
                     Toast.makeText(getApplicationContext(), "User id is: " + userId, Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        mRequestQueue.add(myRequest);
+        mSingleRequestQueue.add(myRequest);
 
 
         // This will work to retrieve JSON arrays
@@ -84,6 +86,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        mRequestQueue.add(myArrayRequest);
+        mSingleRequestQueue.add(myArrayRequest);
     }
 }
